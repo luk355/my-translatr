@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using TranslationHistory.API.Infrastructure.Filters;
+using TranslationHistory.API.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Data.SqlClient;
 
 namespace MyTranslatr.Services.TranslationHistory.API
 {
@@ -21,6 +24,7 @@ namespace MyTranslatr.Services.TranslationHistory.API
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
@@ -30,7 +34,10 @@ namespace MyTranslatr.Services.TranslationHistory.API
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            }).AddControllersAsServices();
 
             services.AddLogging();
 
@@ -42,6 +49,22 @@ namespace MyTranslatr.Services.TranslationHistory.API
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, "TranslationHistory.API.xml");
                 c.IncludeXmlComments(xmlPath);
+            });
+
+            services.AddDbContext<TranslationHistoryDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration["ConnectionString"],
+                                     sqlServerOptionsAction: sqlOptions =>
+                                     {
+                                         sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                                         //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency 
+                                         sqlOptions.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                                     });
+
+                // Changing default behavior when client evaluation occurs to throw. 
+                // Default in EF Core would be to log a warning when client evaluation is performed.
+                options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
+                //Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
             });
         }
 
@@ -56,6 +79,36 @@ namespace MyTranslatr.Services.TranslationHistory.API
             app.UseSwagger();
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Translatr API V1"));
+
+            var context = (TranslationHistoryDbContext)app
+                        .ApplicationServices.GetService(typeof(TranslationHistoryDbContext));
+
+            WaitForSqlAvailability(context, loggerFactory);
+        }
+
+
+        private void WaitForSqlAvailability(TranslationHistoryDbContext ctx, ILoggerFactory loggerFactory, int? retry = 0)
+        {
+            int retryForAvailability = retry.Value;
+
+            try
+            {
+                ctx.Database.OpenConnection();
+            }
+            catch (SqlException ex)
+            {
+                if (retryForAvailability < 10)
+                {
+                    retryForAvailability++;
+                    var log = loggerFactory.CreateLogger(nameof(Startup));
+                    log.LogError(ex.Message);
+                    WaitForSqlAvailability(ctx, loggerFactory, retryForAvailability);
+                }
+            }
+            finally
+            {
+                ctx.Database.CloseConnection();
+            }
         }
     }
 }
