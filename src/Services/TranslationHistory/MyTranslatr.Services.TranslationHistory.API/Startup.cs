@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Data.SqlClient;
+using MyTranslatr.Services.TranslationHistory.API.Auth;
 
 namespace MyTranslatr.Services.TranslationHistory.API
 {
@@ -40,6 +41,11 @@ namespace MyTranslatr.Services.TranslationHistory.API
             }).AddControllersAsServices();
 
             services.AddLogging();
+
+            services.AddIdentityServer()
+                .AddTemporarySigningCredential()
+                        .AddInMemoryApiResources(Config.GetApiResources())
+        .AddInMemoryClients(Config.GetClients());
 
             services.AddSwaggerGen(c =>
             {
@@ -77,17 +83,26 @@ namespace MyTranslatr.Services.TranslationHistory.API
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            // Auth
+            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+            {
+                Authority = "http://localhost:5000",
+                RequireHttpsMetadata = false,
+
+                ApiName = "api1"
+            });
+            app.UseIdentityServer();
+
             app.UseMvc();
-
+            
+            // Swagger
             app.UseSwagger();
-
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Translatr API V1"));
 
+            // DB
             var context = (TranslationHistoryDbContext)app
                         .ApplicationServices.GetService(typeof(TranslationHistoryDbContext));
-
             WaitForSqlAvailability(context, loggerFactory);
-
             InitializeDatabase(app, loggerFactory);
         }
 
@@ -107,7 +122,6 @@ namespace MyTranslatr.Services.TranslationHistory.API
                     retryForAvailability++;
                     var log = loggerFactory.CreateLogger(nameof(Startup));
                     log.LogError(ex.Message);
-                    log.LogInformation($"Server configuration is: {Configuration["ConnectionString"]}");
                     WaitForSqlAvailability(ctx, loggerFactory, retryForAvailability);
                 }
             }
