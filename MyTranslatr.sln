@@ -5,9 +5,13 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7D907B97-60E4-4877-9B68-CF77EF2BD72C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTranslatr.Api", "src\MyTranslatr.Api\MyTranslatr.Api.csproj", "{D9BB2045-4EC9-412F-A322-33C7090F8A18}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TranslationHistory", "TranslationHistory", "{75C8E273-FE15-45E3-9CE5-85B7F9D5D925}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTranslatr.Application", "src\MyTranslatr.Application\MyTranslatr.Application.csproj", "{38642A9B-D1D2-432E-B397-83B1F90024FE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{559D574D-DC35-4B7F-A7EE-A81F17864F25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslationHistory.API", "src\Services\TranslationHistory\MyTranslatr.Services.TranslationHistory.API\TranslationHistory.API.csproj", "{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{4E7B08E8-0847-4039-80F6-F450A803A50B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +19,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D9BB2045-4EC9-412F-A322-33C7090F8A18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9BB2045-4EC9-412F-A322-33C7090F8A18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9BB2045-4EC9-412F-A322-33C7090F8A18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9BB2045-4EC9-412F-A322-33C7090F8A18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38642A9B-D1D2-432E-B397-83B1F90024FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38642A9B-D1D2-432E-B397-83B1F90024FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38642A9B-D1D2-432E-B397-83B1F90024FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38642A9B-D1D2-432E-B397-83B1F90024FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E7B08E8-0847-4039-80F6-F450A803A50B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E7B08E8-0847-4039-80F6-F450A803A50B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E7B08E8-0847-4039-80F6-F450A803A50B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E7B08E8-0847-4039-80F6-F450A803A50B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{D9BB2045-4EC9-412F-A322-33C7090F8A18} = {7D907B97-60E4-4877-9B68-CF77EF2BD72C}
-		{38642A9B-D1D2-432E-B397-83B1F90024FE} = {7D907B97-60E4-4877-9B68-CF77EF2BD72C}
+		{75C8E273-FE15-45E3-9CE5-85B7F9D5D925} = {559D574D-DC35-4B7F-A7EE-A81F17864F25}
+		{559D574D-DC35-4B7F-A7EE-A81F17864F25} = {7D907B97-60E4-4877-9B68-CF77EF2BD72C}
+		{F9393E05-1DFC-4EAB-ADA3-B6C9B0F6CC54} = {75C8E273-FE15-45E3-9CE5-85B7F9D5D925}
 	EndGlobalSection
 EndGlobal

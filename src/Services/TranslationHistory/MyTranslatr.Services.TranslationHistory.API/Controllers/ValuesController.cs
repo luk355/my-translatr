@@ -4,15 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyTranslatr.Api.Controllers
+namespace MyTranslatr.Services.TranslationHistory.API.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        /// <summary>
-        /// Deletes a specific TodoItem.
-        /// </summary>
-        /// <param name="id"></param>
+        // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {

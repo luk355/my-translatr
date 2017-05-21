@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  mytranslatr.services.translationhistory.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"

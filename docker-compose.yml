@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  mytranslatr.services.translationhistory.api:
+    image: mytranslatr.services.translationhistory.api
+    build:
+      context: ./src/Services/TranslationHistory/MyTranslatr.Services.TranslationHistory.API
+      dockerfile: Dockerfile

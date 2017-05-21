@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
 
-namespace MyTranslatr.Api
+namespace MyTranslatr.Services.TranslationHistory.API
 {
     public class Startup
     {
@@ -40,7 +40,7 @@ namespace MyTranslatr.Api
 
                 //Set the comments path for the swagger json and ui.
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
-                var xmlPath = Path.Combine(basePath, "MyTranslatr.Api.xml");
+                var xmlPath = Path.Combine(basePath, "TranslationHistory.API.xml");
                 c.IncludeXmlComments(xmlPath);
             });
         }
