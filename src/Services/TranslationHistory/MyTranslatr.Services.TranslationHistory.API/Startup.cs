@@ -66,6 +66,9 @@ namespace MyTranslatr.Services.TranslationHistory.API
                 options.ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning));
                 //Check Client vs. Server evaluation: https://docs.microsoft.com/en-us/ef/core/querying/client-eval
             });
+
+            var localPath = new Uri(Configuration["ASPNETCORE_URLS"])?.LocalPath ?? "/";
+            Configuration["BaseUrl"] = localPath;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,6 +87,8 @@ namespace MyTranslatr.Services.TranslationHistory.API
                         .ApplicationServices.GetService(typeof(TranslationHistoryDbContext));
 
             WaitForSqlAvailability(context, loggerFactory);
+
+            InitializeDatabase(app, loggerFactory);
         }
 
 
@@ -102,12 +107,27 @@ namespace MyTranslatr.Services.TranslationHistory.API
                     retryForAvailability++;
                     var log = loggerFactory.CreateLogger(nameof(Startup));
                     log.LogError(ex.Message);
+                    log.LogInformation($"Server configuration is: {Configuration["ConnectionString"]}");
                     WaitForSqlAvailability(ctx, loggerFactory, retryForAvailability);
                 }
             }
             finally
             {
                 ctx.Database.CloseConnection();
+            }
+        }
+
+        private void InitializeDatabase(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetRequiredService<TranslationHistoryDbContext>().Database.Migrate();
+
+                var context = serviceScope.ServiceProvider.GetRequiredService<TranslationHistoryDbContext>();
+                context.Database.Migrate();
+
+                var log = loggerFactory.CreateLogger(nameof(Startup));
+                log.LogInformation("Database migrated!");
             }
         }
     }

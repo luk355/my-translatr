@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>4e7b08e8-0847-4039-80f6-f450a803a50b</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://localhost:{ServicePort}/api/values</DockerServiceUrl>
+    <DockerServiceUrl>http://localhost:{ServicePort}/api/history</DockerServiceUrl>
     <DockerServiceName>mytranslatr.services.translationhistory.api</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

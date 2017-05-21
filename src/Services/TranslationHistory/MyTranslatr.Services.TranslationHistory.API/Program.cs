@@ -16,7 +16,6 @@ namespace MyTranslatr.Services.TranslationHistory.API
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
                 .Build();
 
             host.Run();

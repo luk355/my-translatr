@@ -1,4 +1,4 @@
-version: '2'
+﻿version: '2'
 
 services:
   mytranslatr.services.translationhistory.api:
@@ -6,3 +6,8 @@ services:
     build:
       context: ./src/Services/TranslationHistory/MyTranslatr.Services.TranslationHistory.API
       dockerfile: Dockerfile
+    depends_on:
+      - sql.data
+
+  sql.data:
+    image: microsoft/mssql-server-linux
